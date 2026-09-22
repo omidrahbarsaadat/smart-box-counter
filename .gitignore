@@ -1,0 +1,13 @@
+__pycache__/
+.pytest_cache/
+.venv/
+.vercel/
+.sites-runtime/
+*.py[cod]
+data/*.db
+data/*.csv
+data/*.mp4
+data/*.webm
+snapshots/*.jpg
+!data/.gitkeep
+!snapshots/.gitkeep

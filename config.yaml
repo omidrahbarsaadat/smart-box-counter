@@ -1,0 +1,88 @@
+camera:
+  id: 0
+  width: 1280
+  height: 720
+  fps: 30
+
+roi:
+  # Normalized coordinates: x, y, width, height (0.0 to 1.0)
+  x: 0.05
+  y: 0.05
+  width: 0.90
+  height: 0.90
+
+counting_line:
+  orientation: horizontal
+  position: 0.55
+  direction: any       # any, down, or up
+  hysteresis_px: 5
+  min_crossing_movement_px: 3
+
+detection:
+  history: 300
+  variance_threshold: 32
+  detect_shadows: true
+  learning_rate: -1
+  min_area: 1800
+  max_area: 250000
+  min_width: 35
+  min_height: 35
+  min_aspect_ratio: 0.25
+  max_aspect_ratio: 4.0
+  min_rectangularity: 0.45
+  blur_kernel: 5
+  morph_kernel: 7
+  warmup_frames: 15
+
+tracking:
+  max_distance: 110
+  max_missed_frames: 12
+  min_confirmed_frames: 3
+  min_total_movement_px: 18
+
+color_detection:
+  inner_crop_ratio: 0.15
+  min_coverage: 0.08
+  # OpenCV HSV ranges: H=0..179, S=0..255, V=0..255.
+  ranges:
+    red:
+      - lower: [0, 80, 45]
+        upper: [10, 255, 255]
+      - lower: [170, 80, 45]
+        upper: [179, 255, 255]
+    blue:
+      - lower: [95, 70, 40]
+        upper: [135, 255, 255]
+    green:
+      - lower: [35, 55, 35]
+        upper: [90, 255, 255]
+    yellow:
+      - lower: [18, 80, 80]
+        upper: [35, 255, 255]
+    white:
+      - lower: [0, 0, 170]
+        upper: [179, 65, 255]
+    black:
+      - lower: [0, 0, 0]
+        upper: [179, 255, 55]
+    brown:
+      - lower: [5, 60, 25]
+        upper: [22, 255, 190]
+
+storage:
+  database: data/box_counts.db
+  csv_export: data/box_counts.csv
+  save_snapshots: true
+  snapshots_dir: snapshots
+
+display:
+  window_name: Smart Box Counter
+  scale: 1.0
+  show_mask: false
+
+yolo:
+  model: yolo26n.pt
+  confidence: 0.25
+  iou: 0.7
+  device: null
+  classes: null

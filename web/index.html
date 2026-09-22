@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#071018" />
+    <meta name="description" content="No-install browser box counter with webcam tracking, HSV color detection, line-crossing counts, local event storage, snapshots, and CSV export." />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Smart Box Counter</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#workspace" aria-label="Smart Box Counter home">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span><strong>Smart Box Counter</strong><small>Browser vision workstation</small></span>
+      </a>
+      <div class="top-status">
+        <span class="privacy-note">Frames stay on this device</span>
+        <span class="status-pill" id="systemStatus" data-state="idle"><i></i><span>Ready</span></span>
+      </div>
+    </header>
+
+    <main id="workspace" class="workspace">
+      <section class="vision-column" aria-label="Camera workspace">
+        <div class="section-heading">
+          <div><span class="eyebrow">LIVE INSPECTION</span><h1>Counting workspace</h1></div>
+          <div class="source-actions">
+            <button class="button button-primary" id="startCamera" type="button">Start camera</button>
+            <label class="button button-secondary" for="videoFile">Open video</label>
+            <input id="videoFile" type="file" accept="video/*" hidden />
+            <button class="button button-ghost" id="stopSource" type="button" disabled>Stop</button>
+          </div>
+        </div>
+
+        <div class="camera-shell" id="cameraShell">
+          <video id="sourceVideo" muted playsinline hidden></video>
+          <canvas id="visionCanvas" width="960" height="540" aria-label="Live camera detection preview"></canvas>
+          <div class="empty-camera" id="emptyCamera">
+            <div class="scan-icon" aria-hidden="true"><span></span></div>
+            <strong>Connect a camera or open a video</strong>
+            <p>Allow camera access when your browser asks. Processing runs locally in this tab.</p>
+          </div>
+          <div class="warmup" id="warmup" hidden><span></span>Learning the empty background…</div>
+          <div class="camera-meta"><span id="sourceLabel">No source</span><span id="fpsLabel">0.0 FPS</span></div>
+        </div>
+
+        <div class="quick-guide">
+          <span class="guide-number">01</span><p>Keep the camera fixed and the line clear for one second.</p>
+          <span class="guide-number">02</span><p>Move each box fully across the amber line without stopping.</p>
+          <span class="guide-number">03</span><p>Each tracking ID is counted once; results are stored in this browser.</p>
+        </div>
+      </section>
+
+      <aside class="control-column" aria-label="Counts and controls">
+        <section class="metric-card total-card">
+          <div><span class="eyebrow">SHIFT TOTAL</span><strong id="totalCount">0</strong></div>
+          <span class="metric-caption">counted boxes</span>
+        </section>
+
+        <section class="panel color-panel">
+          <div class="panel-title"><h2>Color tally</h2><span>Live</span></div>
+          <div class="color-grid" id="colorGrid"></div>
+        </section>
+
+        <section class="panel setup-panel">
+          <button class="panel-title panel-toggle" id="settingsToggle" type="button" aria-expanded="false" aria-controls="settingsBody">
+            <span><span class="eyebrow">CALIBRATION</span><h2>Detection settings</h2></span><span class="chevron">⌄</span>
+          </button>
+          <div class="settings-body" id="settingsBody" hidden>
+            <label>Counting line <output id="lineValue">55%</output><input id="linePosition" type="range" min="15" max="85" value="55" /></label>
+            <label>Motion sensitivity <output id="thresholdValue">32</output><input id="motionThreshold" type="range" min="10" max="90" value="32" /></label>
+            <label>Minimum box area <output id="areaValue">1800 px²</output><input id="minArea" type="range" min="300" max="12000" step="100" value="1800" /></label>
+            <div class="two-fields">
+              <label>Direction<select id="direction"><option value="any">Either</option><option value="down">Down</option><option value="up">Up</option></select></label>
+              <label>ROI preset<select id="roiPreset"><option value="full">Full frame</option><option value="center">Center 80%</option><option value="conveyor">Wide conveyor</option></select></label>
+            </div>
+            <div class="calibration-box">
+              <label>HSV color<select id="colorSelect"><option>red</option><option>blue</option><option>green</option><option>yellow</option><option>white</option><option>black</option><option>brown</option></select></label>
+              <div class="hsv-fields" id="hsvFields"></div>
+              <p>Click the live image to inspect a pixel: <strong id="pixelHsv">H — · S — · V —</strong></p>
+            </div>
+            <label class="check-row"><input id="saveSnapshots" type="checkbox" checked /><span>Save counted-box snapshots in this browser</span></label>
+            <div class="settings-actions"><button class="button button-secondary" id="resetBackground" type="button">Relearn background</button><button class="text-button" id="resetSettings" type="button">Restore defaults</button></div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="events-section">
+        <div class="events-heading">
+          <div><span class="eyebrow">LOCAL LOG</span><h2>Counted boxes</h2></div>
+          <div><button class="button button-secondary" id="exportCsv" type="button">Export CSV</button><button class="button button-danger" id="clearEvents" type="button">Clear log</button></div>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Time</th><th>Track</th><th>Color</th><th>Confidence</th><th>Source</th><th>Snapshot</th></tr></thead><tbody id="eventRows"><tr class="empty-row"><td colspan="6">No crossings recorded yet.</td></tr></tbody></table>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./app.js?v=5"></script>
+  </body>
+</html>
